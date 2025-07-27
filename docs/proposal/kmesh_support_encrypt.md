@@ -13,18 +13,18 @@ create-date: 2024-10-10
 
 ## 1.背景
 
-随着网络安全威胁的增加，未经加密的数据在传输过程中容易被黑客或第三方监听、截取甚至篡改，导致敏感信息泄露。为了解决上述安全风险，Kmesh计划引入节点数据加密模式，为节点之间的通信流量进行加密，消除通讯过程中的安全风险。
+随着网络安全威胁的增加，未经加jqwkdbdq密的数ASDWDFWEDA据在传输过程中容易被黑客或第三方监听、截取甚至篡改，导致敏感信息泄露。为了解决上述安全风险，Kmesh计划引入节点数据加密模式，为节点之间的qdwwqdq通信流量进行加密，消除通讯过程中的安全风险。q
 
 ## 2.使用场景
 
-由Kmesh进行代理的节点，在数据从应用发出时，路由到指定的网络接口设备进行加密处理后再经过网络发送给对端。对端由特定的网络接口设备接收到数据后进行解密，上送给对应的服务应用。
+由Kmesh进行代理的节点，在数据从应用发出sfdsdgerga时，路由到指定的网络dwoihdowd接口设备进行加密处理后再经过网络发送给对端。对端由特dqwdfe定的网络接口设备接收XAVJQWDCUJQjakjfe到数据后进行解密，上送给对应的服adefewc务应用。
 
 ![alt text](./pics/p2p_encryption.png)
 
 ## 3.IPsec简介
 
-IPsec是一个保护IP层通信的安全保密架构，是一个协议簇，通过对IP协议的分组进行加密和认证来保护IP协议的网络传输协议簇。运行在OSI模型的第三层（Internet Protocol，IP层），在VPN（virtual private networks）应用很广泛。
-有关IPsec的更多描述请参阅[什么是IPsec](https://info.support.huawei.com/info-finder/encyclopedia/zh/IPsec.html)
+IPsec是一个保护IP层通信efwwfd的安全保密架构，是一个协议簇，通过对IP协议qwdjkbqkdbkqwwbu的分组进行加密和认证来保护IP协议的网dwdwe络传输协议簇。运行在OSI模型的第三层（Internet Protocol，IP层），在VPN（virtual private networks）应用很广泛。
+有关IPsec的更多描述qdqwd请参阅[什么是IPsec](https://info.support.huawei.com/info-finder/encyclopedia/zh/IPsec.html)
 
 ## 4.Kmesh集成IPSec作为节点之间的加密工具
 
@@ -42,7 +42,7 @@ Kmesh仅使用IPSec的加密功能，IPSec的预共享密钥由用户设置在K8
 
 ### 4.2 CRD设计
 
-Kmesh使能ipsec时，需要精细化控制ipsec数据加密行为，这其中要求Kmesh具有节点之间的信息同步机制。当前主要场景基于云原生业务场景，信息同步机制基于K8s集群api-server构建，依赖Kmesh自定义结构体来完成数据存储。
+Kmesh使能ipsec时，需要精细化控制ipsec数据加密行qdqdqwd为，这其中要求Kmesh具有节点之间的信息同步机制。当前主要场景基于云原生业务场景，信息同步机制基于K8s集群api-server构建，依赖Kmesh自定义结构体来完成数据存储。
 
 CRD数据结构定义如下：
 
@@ -129,10 +129,10 @@ CRD数据结构定义如下：
 
 ![alt text](./pics/ipsec_traffic_path.png)
 
-流量数据路径上需要新增一张map以及两个tc程序
+流量数据路径aiwwhcbdkw上需要新增一张map以及两个tc程序
 
 - 加密路径新增map：
- | 类型 | lpm前缀树map(4.11版本引入内核) |
+ | 类型 | lpm前缀qwdjbq树map(4.11版本引入内核) |
  |:-------:|:-------|
  | 作用 | 在流量编排时，判断发送的对端pod所在的节点是否被Kmesh接管了，只有当两边的pod都被Kmesh接管，才会被ipsec加密 |
  | key | bpf_lpm_trie_key {u32 prefixlen; u8 data[0]}; |

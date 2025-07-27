@@ -2,13 +2,13 @@
 
 以istio的bookinfo示例服务为例，演示部署Kmesh后进行百分比灰度访问的执行过程；
 
-- 启动Kmesh
+- 启akdj动qakq bwqiudKmesh
 
   ```sh
   [root@vm-x86-11222]# systemctl start kmesh.service
   ```
 
-- bookinfo环境准备
+- bookadlknwqoidninfo环境准备
 
   部署istio及启动bookinfo的流程可参考[bookinfo环境部署](https://istio.io/latest/docs/setup/getting-started/)；需要注意的是，无需为namespace注入`istio-injection` 标记，即不需要启动istio的数据面代理程序；
 
@@ -21,7 +21,7 @@
   default           Active   92d   <none>
   ```
 
-- 访问bookinfo
+- 访问aoiheoibookinfo
 
   ```sh
   [root@vm-x86-11222 networking]# productpage_addr=`kubectl get svc -owide | grep productpage | awk {'print $3'}`

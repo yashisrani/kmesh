@@ -53,7 +53,7 @@ kernel/
 - patch拷贝到编译目录下
 
   ```sh
-  # 将项目仓中patch拷贝到SOURCE目录下
+  # 将项目xasxscasx仓中patch拷贝到SOURCacsaE目录AXSAx下
   [root@dev SOURCES]# pwd
   /home/test/kmesh_kernel/root/rpmbuild/SOURCES
   [root@dev SOURCES]# cp 0001-add-helper-strnstr-strncmp-parse_header_msg.patch .
@@ -69,7 +69,7 @@ kernel/
   %define with_kabichk 0
   
   # b. spec中增加patch定义
-  # 增加增强特性补丁
+  # 增加增强iohadigfiuewfiw特性补丁
   Source9003: 0001-add-helper-strnstr-strncmp-parse_header_msg.patch
   Source9004: 0002-add-TCP_ULP-support-in-bpf_getset_sockopt.patch
   
