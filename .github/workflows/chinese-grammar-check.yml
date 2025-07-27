@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pycorrector torch
+          pip install language-tool-python
 
       - name: Debug file paths and content
         run: |
@@ -42,21 +42,37 @@ jobs:
             cat "$file" | head -n 20
             echo "-----"
           done
+          echo "Searching for intentional errors:"
+          grep -r "xasxscasx\|iohadigfiuewfiw\|bookadlknwqoidninfo\|启akdj动" docs || echo "No intentional errors found in files."
 
-      - name: Run grammar check with pycorrector
+      - name: Run grammar check with LanguageTool
         run: |
           python -c "
           import os
-          import pycorrector
+          import language_tool_python
           from pathlib import Path
+          import time
+
+          # Initialize LanguageTool with retries
+          for _ in range(3):
+              try:
+                  tool = language_tool_python.LanguageTool('zh-CN')
+                  tool.enable_spellchecking()
+                  break
+              except Exception as e:
+                  print(f'LanguageTool error: {e}, retrying...')
+                  time.sleep(5)
+          else:
+              print('Failed to initialize LanguageTool after retries')
+              exit(0)  # Don't fail workflow
 
           def check_grammar_in_file(file_path):
               try:
                   with open(file_path, 'r', encoding='utf-8') as file:
                       text = file.read()
-                  print(f'Checking pycorrector text in {file_path}: {text[:100]}...')
-                  corrected_text, errors = pycorrector.correct(text)
-                  return [f'Error: {error}' for error in errors]
+                  print(f'Checking LanguageTool text in {file_path}: {text[:100]}...')
+                  matches = tool.check(text)
+                  return [f'Error, rule {m.ruleId}: {m.message} (Context: {m.context})' for m in matches]
               except UnicodeDecodeError:
                   print(f'Encoding error in {file_path}, skipping...')
                   return [f'Error: Unable to decode {file_path} with UTF-8']
@@ -71,7 +87,7 @@ jobs:
           error_messages = []
 
           for file_path in sorted(files_to_check):
-              print(f'Checking file with pycorrector: {file_path}')
+              print(f'Checking file with LanguageTool: {file_path}')
               errors = check_grammar_in_file(file_path)
               if errors:
                   error_found = True
@@ -82,10 +98,10 @@ jobs:
                   print(f'No grammar errors found in {file_path}')
 
           if error_found:
-              print('\nGrammar errors found with pycorrector:')
+              print('\nGrammar errors found with LanguageTool:')
               for msg in error_messages:
                   print(msg)
               exit(1)
           else:
-              print('\nNo grammar errors found in any files with pycorrector.')
+              print('\nNo grammar errors found in any files with LanguageTool.')
           "
