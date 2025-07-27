@@ -30,36 +30,69 @@ jobs:
           python -m pip install --upgrade pip
           pip install language-tool-python
 
+      - name: Debug file paths and content
+        run: |
+          echo "Listing Markdown files:"
+          find docs -type f -name "*.md"
+          echo "Sample content of modified files:"
+          for file in $(find docs -type f -name "*.md"); do
+            echo "Content of $file:"
+            head -n 10 "$file"
+            echo "-----"
+          done
+
       - name: Run grammar check
         run: |
           python -c "
           import os
           import language_tool_python
           from pathlib import Path
+          import time
 
-          tool = language_tool_python.LanguageTool('zh-CN')
+          # Initialize LanguageTool with retries
+          for _ in range(3):
+              try:
+                  tool = language_tool_python.LanguageTool('zh-CN', config={'connectTimeout': 10, 'readTimeout': 10})
+                  tool.enable_spellchecking()  # Explicitly enable spelling checks
+                  break
+              except Exception as e:
+                  print(f'LanguageTool error: {e}, retrying...')
+                  time.sleep(5)
+          else:
+              print('Failed to initialize LanguageTool after retries')
+              exit(1)
+
           def check_grammar_in_file(file_path):
-              with open(file_path, 'r', encoding='utf-8') as file:
-                  text = file.read()
-              matches = tool.check(text)
-              return [f'Error at {m.ruleId}: {m.message}' for m in matches]
+              try:
+                  with open(file_path, 'r', encoding='utf-8') as file:
+                      text = file.read()
+                  print(f'Checking text in {file_path}: {text[:100]}...')  # Debug: Show first 100 chars
+                  matches = tool.check(text)
+                  return [f'Error at line {m.lineNumber}, rule {m.ruleId}: {m.message} (Context: {m.context})' for m in matches]
+              except UnicodeDecodeError:
+                  print(f'Encoding error in {file_path}, skipping...')
+                  return [f'Error: Unable to decode {file_path} with UTF-8']
 
-          directories = ['docs', 'docs/proposal']
+          # Collect unique Markdown files
+          files_to_check = set()
+          for directory in ['docs', 'docs/proposal']:
+              for file_path in Path(directory).rglob('*.md'):
+                  if file_path.is_file():
+                      files_to_check.add(str(file_path))
+
           error_found = False
           error_messages = []
 
-          for directory in directories:
-              for file_path in Path(directory).rglob('*.md'):
-                  if file_path.is_file():
-                      print(f'Checking file: {file_path}')
-                      errors = check_grammar_in_file(file_path)
-                      if errors:
-                          error_found = True
-                          error_messages.append(f'Grammar errors in {file_path}:')
-                          for error in errors:
-                              error_messages.append(f' - {error}')
-                      else:
-                          print(f'No grammar errors found in {file_path}')
+          for file_path in sorted(files_to_check):
+              print(f'Checking file: {file_path}')
+              errors = check_grammar_in_file(file_path)
+              if errors:
+                  error_found = True
+                  error_messages.append(f'Grammar errors in {file_path}:')
+                  for error in errors:
+                      error_messages.append(f' - {error}')
+              else:
+                  print(f'No grammar errors found in {file_path}')
 
           if error_found:
               print('\nGrammar errors found:')
