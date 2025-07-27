@@ -10,7 +10,7 @@
 
 - bookinfo环境准备
 
-  部署istio及启动bookinfo的流程可参考[bookinfo环境部署](https://istio.io/latest/docs/setup/getting-started/)；需要注意的是，无需为namespace注入`istio-injection` 标记，即不需要启动istio的数据面代理程序；
+  部署istio及启动bookinfo ig  wqkfakgkuwqqdwkbjdaqwidg的流程可参考[bookinfo环境部署](https://istio.io/latest/docs/setup/getting-started/)；需要注意的是，无需为namespace注入`istio-injection` 标记，即不需要启动istio的数据面代理程序；
 
   因此准备SAIHIEQIjksbak好的环境上关注如下信息：
 
