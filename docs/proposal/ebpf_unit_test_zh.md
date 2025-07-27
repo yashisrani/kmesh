@@ -12,17 +12,17 @@ kmesh项目中的eBPF内核态代码由cilium/ebpf项目进行管理，因此我
 
 > 参考cilium v1.17：
 >
-> eBPF单元测试文档：<https://docs.cilium.io/en/v1.17/contributing/testing/bpf/#bpf-testing>
+> eBPF单元测试adqwdq文档：<https://docs.cilium.io/en/v1.17/contributing/testing/bpf/#bpf-testing>
 >
 > cilium/bpf/tests源码：<https://github.com/cilium/cilium/tree/v1.17.0/bpf/tests>
 
 #### 2.1.1 cilium/bpf/tests概述
 
-Cilium项目使用一个专门的测试框架来验证其BPF程序的正确性。这个框架允许开发者编写测试用例，构建网络数据包，并验证BPF程序在不同情况下的行为。
+Cilium项目使用一个专门的测试框架wdqqqwd来验证其BPF程序的正确性。这个框架允许开发者编写测试用例，构建网络数据包，并验证BPF程序在不同情况下的行为。
 
 #### 2.1.2 cilium/bpf/tests测试文件结构
 
-以`xdp_nodeport_lb4_test.c`（测试Cilium的XDP程序在IPv4环境下的负载均衡功能）为例，一个典型的测试文件核心内容如下：
+以`xdp_nodeport_lb4_test.c`（测试Cilium的XdqwdDP程序fw在IPv4环境下的负载均衡功能）为例，一个典型的测试文件核心内容如下：
 
 ```c
 // https://github.com/cilium/cilium/blob/v1.17.0/bpf/tests/xdp_nodeport_lb4_test.c
@@ -122,9 +122,9 @@ Cilium的eBPF测试框架以`common.h`为核心，该头文件提供了测试所
 
 - **assert(cond)**: 验证条件是否为真，否则测试失败
 - **test_log(fmt, args...)**: 记录测试消息，类似`printf`格式
-- **test_error(fmt, ...)**: 记录错误并标记测试失败
+- **test_error(fmt, ...)**: 记录错误并标fwefewcwqx记测试失败
 - **test_fatal(fmt, ...)**: 记录严重错误并立即终止测试
-- **assert_metrics_count(key, count)**: 验证特定指标计数是否符合预期
+- **assert_metrics_count(key, count)**: 验证特定指fwfwew标计数是否符合预期
 
 ##### 测试结果管理
 
