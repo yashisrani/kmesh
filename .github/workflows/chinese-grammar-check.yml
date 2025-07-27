@@ -28,20 +28,21 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pycorrector torch
+          pip install language-tool-python
 
       - name: Run grammar check
         run: |
           python -c "
           import os
-          import pycorrector
+          import language_tool_python
           from pathlib import Path
 
+          tool = language_tool_python.LanguageTool('zh-CN')
           def check_grammar_in_file(file_path):
               with open(file_path, 'r', encoding='utf-8') as file:
                   text = file.read()
-              errors = pycorrector.detect(text)
-              return errors
+              matches = tool.check(text)
+              return [f'Error at {m.ruleId}: {m.message}' for m in matches]
 
           directories = ['docs', 'docs/proposal']
           error_found = False
