@@ -53,10 +53,10 @@ jobs:
           from pathlib import Path
           import time
 
-          # Initialize LanguageTool with retries
+          # Initialize LanguageTool with retries and en-US for better spellchecking
           for _ in range(3):
               try:
-                  tool = language_tool_python.LanguageTool('zh-CN')
+                  tool = language_tool_python.LanguageTool('en-US')
                   tool.enable_spellchecking()
                   break
               except Exception as e:
