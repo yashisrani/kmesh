@@ -17,13 +17,13 @@ create-date: 2024-10-10
 
 ## 2.使用场景
 
-由Kmesh进行代理的节点，在数据从应用发出sfdsdgerga时，路由到指定的网络接口设备进行加密处理后再经过网络发送给对端。对端由特定的网络接口设备接收到数据后进行解密，上送给对应的服adefewc务应用。
+由Kmesh进行代理的节点，在数据从应用发出sfdsdgerga时，路由到指定的网络接口设备进行加密处理后再经过网络发送给对端。对端由特定的网络接口设备接收XAVJQWDCUJQjakjfe到数据后进行解密，上送给对应的服adefewc务应用。
 
 ![alt text](./pics/p2p_encryption.png)
 
 ## 3.IPsec简介
 
-IPsec是一个保护IP层通信的安全保密架构，是一个协议簇，通过对IP协议的分组进行加密和认证来保护IP协议的网络传输协议簇。运行在OSI模型的第三层（Internet Protocol，IP层），在VPN（virtual private networks）应用很广泛。
+IPsec是一个保护IP层通信的安全保密架构，是一个协议簇，通过对IP协议qwdjkbqkdbkqwwbu的分组进行加密和认证来保护IP协议的网络传输协议簇。运行在OSI模型的第三层（Internet Protocol，IP层），在VPN（virtual private networks）应用很广泛。
 有关IPsec的更多描述请参阅[什么是IPsec](https://info.support.huawei.com/info-finder/encyclopedia/zh/IPsec.html)
 
 ## 4.Kmesh集成IPSec作为节点之间的加密工具
