@@ -6,11 +6,13 @@ on:
     paths:
       - 'docs/**'
       - 'docs/proposal/**'
+      - 'docs/ctl/**'  # Added to cover ctl subdirectory
   pull_request:
     branches: [main]
     paths:
       - 'docs/**'
       - 'docs/proposal/**'
+      - 'docs/ctl/**'
 
 jobs:
   grammar-check:
@@ -28,20 +30,20 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install language-tool-python
+          pip install language-tool-python pycorrector torch
 
       - name: Debug file paths and content
         run: |
           echo "Listing Markdown files:"
           find docs -type f -name "*.md"
-          echo "Sample content of modified files:"
+          echo "Sample content of all Markdown files:"
           for file in $(find docs -type f -name "*.md"); do
             echo "Content of $file:"
-            head -n 10 "$file"
+            cat "$file" | head -n 20
             echo "-----"
           done
 
-      - name: Run grammar check
+      - name: Run grammar check with LanguageTool
         run: |
           python -c "
           import os
@@ -53,7 +55,7 @@ jobs:
           for _ in range(3):
               try:
                   tool = language_tool_python.LanguageTool('zh-CN', config={'connectTimeout': 10, 'readTimeout': 10})
-                  tool.enable_spellchecking()  # Explicitly enable spelling checks
+                  tool.enable_spellchecking()
                   break
               except Exception as e:
                   print(f'LanguageTool error: {e}, retrying...')
@@ -66,16 +68,15 @@ jobs:
               try:
                   with open(file_path, 'r', encoding='utf-8') as file:
                       text = file.read()
-                  print(f'Checking text in {file_path}: {text[:100]}...')  # Debug: Show first 100 chars
+                  print(f'Checking LanguageTool text in {file_path}: {text[:100]}...')
                   matches = tool.check(text)
                   return [f'Error at line {m.lineNumber}, rule {m.ruleId}: {m.message} (Context: {m.context})' for m in matches]
               except UnicodeDecodeError:
                   print(f'Encoding error in {file_path}, skipping...')
                   return [f'Error: Unable to decode {file_path} with UTF-8']
 
-          # Collect unique Markdown files
           files_to_check = set()
-          for directory in ['docs', 'docs/proposal']:
+          for directory in ['docs', 'docs/proposal', 'docs/ctl']:
               for file_path in Path(directory).rglob('*.md'):
                   if file_path.is_file():
                       files_to_check.add(str(file_path))
@@ -84,7 +85,7 @@ jobs:
           error_messages = []
 
           for file_path in sorted(files_to_check):
-              print(f'Checking file: {file_path}')
+              print(f'Checking file with LanguageTool: {file_path}')
               errors = check_grammar_in_file(file_path)
               if errors:
                   error_found = True
@@ -95,11 +96,57 @@ jobs:
                   print(f'No grammar errors found in {file_path}')
 
           if error_found:
-              print('\nGrammar errors found:')
+              print('\nGrammar errors found with LanguageTool:')
               for msg in error_messages:
                   print(msg)
               exit(1)
           else:
-              print('\nNo grammar errors found in any files.')
-              exit(0)
+              print('\nNo grammar errors found in any files with LanguageTool.')
+          "
+
+      - name: Run grammar check with pycorrector
+        run: |
+          python -c "
+          import os
+          import pycorrector
+          from pathlib import Path
+
+          def check_grammar_in_file(file_path):
+              try:
+                  with open(file_path, 'r', encoding='utf-8') as file:
+                      text = file.read()
+                  print(f'Checking pycorrector text in {file_path}: {text[:100]}...')
+                  errors = pycorrector.detect(text)
+                  return [f'Error: {error}' for error in errors]
+              except UnicodeDecodeError:
+                  print(f'Encoding error in {file_path}, skipping...')
+                  return [f'Error: Unable to decode {file_path} with UTF-8']
+
+          files_to_check = set()
+          for directory in ['docs', 'docs/proposal', 'docs/ctl']:
+              for file_path in Path(directory).rglob('*.md'):
+                  if file_path.is_file():
+                      files_to_check.add(str(file_path))
+
+          error_found = False
+          error_messages = []
+
+          for file_path in sorted(files_to_check):
+              print(f'Checking file with pycorrector: {file_path}')
+              errors = check_grammar_in_file(file_path)
+              if errors:
+                  error_found = True
+                  error_messages.append(f'Grammar errors in {file_path}:')
+                  for error in errors:
+                      error_messages.append(f' - {error}')
+              else:
+                  print(f'No grammar errors found in {file_path}')
+
+          if error_found:
+              print('\nGrammar errors found with pycorrector:')
+              for msg in error_messages:
+                  print(msg)
+              exit(1)
+          else:
+              print('\nNo grammar errors found in any files with pycorrector.')
           "
