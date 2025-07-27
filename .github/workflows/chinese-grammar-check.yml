@@ -64,7 +64,7 @@ jobs:
                   time.sleep(5)
           else:
               print('Failed to initialize LanguageTool after retries')
-              exit(0)  # Don't fail workflow
+              exit(0)
 
           def check_grammar_in_file(file_path):
               try:
