@@ -13,26 +13,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🧭 Checkout kmesh repository
+      - name: Checkout kmesh repository
         uses: actions/checkout@v4
         with:
           repository: kmesh-net/kmesh
           token: ${{ secrets.GITHUB_TOKEN }}
           path: kmesh
 
-      - name: 🧭 Checkout website repository
+      - name: Checkout website repository
         uses: actions/checkout@v4
         with:
           repository: kmesh-net/website
           token: ${{ secrets.WEBSITE_PAT }}
           path: website
 
-      - name: 🔁 Sync kmeshctl Docs Using rsync
+      - name: Sync kmeshctl Docs Using rsync
         run: |
           set -e
 
           KMESH_CTL_DIR="kmesh/docs/ctl"
           WEBSITE_KMESHCTL_DIR="website/docs/kmeshctl"
+
+          echo "Source directory: $KMESH_CTL_DIR"
+          echo "Target directory: $WEBSITE_KMESHCTL_DIR"
 
           if [ ! -d "$KMESH_CTL_DIR" ]; then
             echo "❌ ERROR: $KMESH_CTL_DIR does not exist!"
@@ -44,8 +47,8 @@ jobs:
             mkdir -p "$WEBSITE_KMESHCTL_DIR"
           fi
 
-          echo "🔄 Syncing with rsync (includes deletions)..."
-          rsync -av --delete --exclude='.git' "$KMESH_CTL_DIR/" "$WEBSITE_KMESHCTL_DIR/"
+          echo "Syncing with rsync (includes deletions)..."
+          rsync -avv --delete --exclude='.git' --exclude='.*' "$KMESH_CTL_DIR/" "$WEBSITE_KMESHCTL_DIR/"
 
           cd website
 
