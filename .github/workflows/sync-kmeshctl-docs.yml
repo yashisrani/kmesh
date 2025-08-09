@@ -27,7 +27,7 @@ jobs:
           token: ${{ secrets.WEBSITE_PAT }}
           path: website
 
-      - name: Sync kmeshctl Docs Using rsync
+      - name: 🔁 Sync kmeshctl Docs Using rsync
         run: |
           set -e
 
@@ -47,8 +47,8 @@ jobs:
             mkdir -p "$WEBSITE_KMESHCTL_DIR"
           fi
 
-          echo "Syncing with rsync (includes deletions)..."
-          rsync -avv --delete --exclude='.git' --exclude='.*' "$KMESH_CTL_DIR/" "$WEBSITE_KMESHCTL_DIR/"
+          echo "🔄 Syncing with rsync (includes deletions)..."
+          rsync -av --delete --exclude='.git' --exclude='.*' "$KMESH_CTL_DIR/" "$WEBSITE_KMESHCTL_DIR/"
 
           cd website
 
@@ -56,10 +56,28 @@ jobs:
             echo "✅ No changes detected. All docs are up to date."
             exit 0
           else
-            echo "✨ Changes detected. Staging for PR..."
+            echo "✨ Changes detected. Creating commit..."
+
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
 
             git add docs/kmeshctl/
-            git commit -m "docs: sync kmeshctl documentation from kmesh
+            git commit -m 'docs: sync kmeshctl docs'
           fi
+
+      - name: 🤝 Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.WEBSITE_PAT }}
+          path: website
+          branch: automated/sync-kmeshctl-docs-${{ github.run_id }}
+          title: "docs: sync latest kmeshctl documentation"
+          body: |
+            This PR syncs the latest changes from [kmesh/docs/ctl](https://github.com/kmesh-net/kmesh/tree/main/docs/ctl).
+
+            🔍 **Please review before merging.**
+
+            _Automated by GitHub Actions._
+          commit-message: "docs: sync kmeshctl docs"
+          base: main
+          delete-branch: true
