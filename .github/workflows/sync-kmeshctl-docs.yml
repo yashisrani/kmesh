@@ -1,0 +1,62 @@
+name: Sync kmeshctl Docs to Website (via PR)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/ctl/**
+      - .github/workflows/sync-kmeshctl-docs.yml
+
+jobs:
+  sync-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧭 Checkout kmesh repository
+        uses: actions/checkout@v4
+        with:
+          repository: kmesh-net/kmesh
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: kmesh
+
+      - name: 🧭 Checkout website repository
+        uses: actions/checkout@v4
+        with:
+          repository: kmesh-net/website
+          token: ${{ secrets.WEBSITE_PAT }}
+          path: website
+
+      - name: 🔁 Sync kmeshctl Docs Using rsync
+        run: |
+          set -e
+
+          KMESH_CTL_DIR="kmesh/docs/ctl"
+          WEBSITE_KMESHCTL_DIR="website/docs/kmeshctl"
+
+          if [ ! -d "$KMESH_CTL_DIR" ]; then
+            echo "❌ ERROR: $KMESH_CTL_DIR does not exist!"
+            exit 1
+          fi
+
+          if [ ! -d "$WEBSITE_KMESHCTL_DIR" ]; then
+            echo "📁 Creating $WEBSITE_KMESHCTL_DIR..."
+            mkdir -p "$WEBSITE_KMESHCTL_DIR"
+          fi
+
+          echo "🔄 Syncing with rsync (includes deletions)..."
+          rsync -av --delete --exclude='.git' "$KMESH_CTL_DIR/" "$WEBSITE_KMESHCTL_DIR/"
+
+          cd website
+
+          if git diff --quiet; then
+            echo "✅ No changes detected. All docs are up to date."
+            exit 0
+          else
+            echo "✨ Changes detected. Staging for PR..."
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+
+            git add docs/kmeshctl/
+            git commit -m "docs: sync kmeshctl documentation from kmesh
+          fi
