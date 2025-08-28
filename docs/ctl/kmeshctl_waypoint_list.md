@@ -35,6 +35,9 @@ kmeshctl waypoint list [flags]
   -n, --namespace string   Kubernetes namespace
 ```
 
+
+only testing ....
+
 ### SEE ALSO
 
 * [kmeshctl waypoint](kmeshctl_waypoint.md) - Manage waypoint configuration
