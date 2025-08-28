@@ -30,4 +30,5 @@ kmeshctl secret create
 
 ### SEE ALSO
 
+testing
 * [kmeshctl secret](kmeshctl_secret.md) - Manage IPsec secrets for Kmesh
